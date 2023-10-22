@@ -59,7 +59,7 @@ function Home() {
 }
 
 function App(): JSX.Element {
-  let onboarded = false;
+  let onboarded = true;
 
   return (
     <NavigationContainer>

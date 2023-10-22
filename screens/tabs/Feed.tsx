@@ -69,6 +69,7 @@ export default function Feed({navigation}: {navigation: any}) {
   );
 
   async function navigateToChallenge() {
+    setLoading(true);
     let {status} = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert('Permission to access location was denied');
@@ -83,6 +84,7 @@ export default function Feed({navigation}: {navigation: any}) {
     const url = `https://maps.googleapis.com/maps/api/place/details/json?fields=place_id%2Ccurrent_opening_hours%2Cformatted_address%2Cformatted_phone_number%2Cgeometry%2Cname%2Cphotos%2Crating%2Creviews%2Curl%2Cwebsite&place_id=${json.results[0].place_id}&key=${GOOGLE_API_KEY}`;
     const placeData = await fetch(url);
     const place = (await placeData.json()).result;
+    setLoading(false);
     navigation.navigate('Challenge', {user, location, place});
   }
 
