@@ -1,8 +1,8 @@
 import React from 'react';
 import {SafeAreaView, View, StyleSheet, Text} from 'react-native';
-import {User, user, friend1, friend2, friend3} from '../../types/User.ts';
+import {User, user, friend1, friend2, friend3} from '../../types/User';
 // import {Challenge} from '../../types/Challenge.ts';
-import LeaderboardItem from '../../components/LeaderboardItem.tsx';
+import LeaderboardItem from '../../components/LeaderboardItem';
 
 // const challenge: Challenge = {
 //   name: 'Go to Zilker Park',
@@ -67,6 +67,6 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   standingText: {
-    fontSize
+    fontSize: 20
   }
 });

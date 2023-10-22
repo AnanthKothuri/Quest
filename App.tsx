@@ -9,9 +9,9 @@ import Feed from './screens/tabs/Feed';
 import Leaderboard from './screens/tabs/Leaderboard';
 import Profile from './screens/tabs/Profile';
 import Challenge from './screens/tabs/Challenge';
-import {ProfileIcon} from './components/Icons.tsx';
-import {LeaderboardIcon} from './components/Icons.tsx';
-import {FeedIcon} from './components/Icons.tsx';
+import {ProfileIcon} from './components/Icons';
+import {LeaderboardIcon} from './components/Icons';
+import {FeedIcon} from './components/Icons';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
