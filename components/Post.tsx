@@ -1,47 +1,51 @@
 import React from 'react';
-import {Text, StyleSheet, View} from 'react-native';
+import {Text, StyleSheet, View, Image} from 'react-native';
 import {User} from '../types/User';
 import {PostDetails} from '../types/PostDetails';
+import {Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
 
-type Props = {
-  user: User;
-  post: PostDetails;
-};
+// type Props = {
+//   user: User;
+//   post: PostDetails;
+// };
 
-export default function Post(props: Props) {
+export default function Post({user}: {user: User}) {
   return (
     <View style={styles.container}>
       <View style={styles.profileContainer}>
         <View style={styles.imageAndName}>
-          {/* <Icon name="person" /> */}
-          <View>
-            <Text style={styles.name}>{props.user.name}</Text>
-            <Text style={styles.date}>{props.post.date}</Text>
+          <Image source={{uri: user.profilePicture}} style={styles.profileImage} />
+          <View style={{paddingLeft: 10}}>
+            <Text style={styles.name}>{user.name}</Text>
+            <Text style={styles.date}>{user.latestPost.date}</Text>
           </View>
         </View>
 
-        {/* <MaterialCommunityIcons name="account" /> */}
+        <Ionicons name="ellipsis-horizontal-sharp" size={25} />
       </View>
 
-      <View style={styles.postContainer} />
-
+      
+      <Image source={{uri: user.latestPost.media}} style={styles.postContainer}/>
+      {/* <View style={styles.postContainer} /> */}
+        
       <View style={styles.footerContainer}>
-        <Text style={styles.footerContainer}>{props.post.description}</Text>
-        {/* <MaterialCommunityIcons name="thumb-up-icon" /> */}
+        <Text style={{paddingTop: 5, paddingBottom: 5}}>{user.latestPost.description}</Text>
+        <MaterialCommunityIcons name="thumb-up-outline" size={20}/>
       </View>
     </View>
   );
+  
 }
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
     marginVertical: 10,
-    marginHorizontal: 20,
+    marginHorizontal: 10,
     padding: 10,
-    borderRadius: 20,
-    shadowOffset: {width: 0, height: 0},
-    shadowOpacity: 0.5,
+    borderRadius: 15,
+    shadowOffset: {width: 1, height: 2},
+    shadowOpacity: 0.3,
   },
   headerContainer: {
     flexDirection: 'row',
@@ -50,11 +54,11 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   postContainer: {
-    minHeight: 200,
+    minHeight: 350,
     flexDirection: 'row',
     flex: 1,
-    borderRadius: 20,
-    backgroundColor: 'lightgray',
+    borderRadius: 10,
+    // backgroundColor: 'lightgray',
   },
   footerContainer: {
     flexDirection: 'row',
@@ -69,6 +73,8 @@ const styles = StyleSheet.create({
   },
   imageAndName: {
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   name: {
     fontSize: 14,
@@ -80,4 +86,9 @@ const styles = StyleSheet.create({
     color: 'gray',
     paddingLeft: 5,
   },
+  profileImage: {
+    width: 25,
+    height: 25,
+    borderRadius: 13,
+  }
 });

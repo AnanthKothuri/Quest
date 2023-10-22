@@ -9,9 +9,12 @@ import Feed from './screens/tabs/Feed';
 import Leaderboard from './screens/tabs/Leaderboard';
 import Profile from './screens/tabs/Profile';
 import Challenge from './screens/tabs/Challenge';
-import {ProfileIcon} from './components/Icons';
-import {LeaderboardIcon} from './components/Icons';
-import {FeedIcon} from './components/Icons';
+import Onboarding from './screens/Onboarding';
+import SubmitPost from './screens/tabs/SubmitPost';
+import {Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
+// import {ProfileIcon} from './components/Icons';
+// import {LeaderboardIcon} from './components/Icons';
+// import {FeedIcon} from './components/Icons';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -19,50 +22,44 @@ const Tab = createBottomTabNavigator();
 function Home() {
   return (
     <Tab.Navigator
+      initialRouteName="Feed"
       screenOptions={({route}) => ({
-        tabBarIcon: () => {
+        tabBarIcon: ({focused}) => {
           if (route.name === 'Leaderboard') {
-            return <LeaderboardIcon dimensions={30} />;
+            return (
+              <Ionicons
+                name={focused ? 'md-podium' : 'podium-outline'}
+                size={25}
+              />
+            );
           } else if (route.name === 'Feed') {
-            return <FeedIcon dimensions={24} />;
-          } else {
-            return <ProfileIcon dimensions={30} />;
+            return (
+              <Ionicons
+                name={focused ? 'compass' : 'compass-outline'}
+                size={30}
+              />
+            );
+          } else if (route.name === 'Profile') {
+            return (
+              <Ionicons
+                name={focused ? 'person' : 'person-outline'}
+                size={25}
+              />
+            );
           }
         },
         tabBarActiveTintColor: '#000000',
         tabBarInactiveTintColor: '#999999',
       })}>
-      <Tab.Screen
-        name="Leaderboard"
-        component={Leaderboard}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Tab.Screen
-        name="Feed"
-        component={Feed}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={Profile}
-        options={{
-          headerShown: false,
-        }}
-      />
+      <Tab.Screen name="Leaderboard" component={Leaderboard} />
+      <Tab.Screen name="Feed" component={Feed} />
+      <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
   );
 }
 
-function Onboarding() {
-  return <Text>Hi</Text>;
-}
-
 function App(): JSX.Element {
-  let onboarded = true;
+  let onboarded = false;
 
   return (
     <NavigationContainer>
@@ -73,16 +70,9 @@ function App(): JSX.Element {
             component={Home}
             options={{headerShown: false}}
           />
-          <Stack.Screen
-            name="Onboarding"
-            component={Onboarding}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen
-            name="Challenge"
-            component={Challenge}
-            options={{headerShown: false}}
-          />
+          <Stack.Screen name="Onboarding" component={Onboarding} />
+          <Stack.Screen name="Challenge" component={Challenge} />
+          <Stack.Screen name="Submit Post" component={SubmitPost} />
         </Stack.Navigator>
       </SafeAreaProvider>
     </NavigationContainer>

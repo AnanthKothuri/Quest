@@ -1,6 +1,7 @@
 import React from 'react';
-import {View, TouchableOpacity, StyleSheet, Text} from 'react-native';
+import {View, TouchableOpacity, StyleSheet, Text, Image} from 'react-native';
 import {User} from '../types/User';
+import {Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
 
 type Props = {
   user: User;
@@ -14,6 +15,10 @@ function itemStyle(rank: number) {
     padding: 20,
     borderRadius: 10,
     alignItems: 'center',
+    shadowColor: rank == 1 ? 'rgba(245, 206, 66, 1)' : 'rgba(0, 0, 0, 0)', // Adjust the color and opacity of the glow
+    shadowOffset: { width: 4, height: 0 }, // Adjust the offset to control the glow's position
+    shadowRadius: rank == 1 ? 20 : 0, // Adjust the radius to control the glow's size
+    shadowOpacity: rank == 1 ? 1 : 0, // Adjust the opacity to control the glow's visibility
   }
 }
 
@@ -23,16 +28,15 @@ export default function LeaderboardItem(props: Props) {
         <TouchableOpacity style={itemStyle(props.rank)}>
         {/* <View> */}
         <View style={styles.row}>
-          <Text style={styles.rankNumber}>{props.rank}</Text>
-          {/* display profile picture here */}
+        <Image source={{uri: props.user.profilePicture}} style={styles.profilePicture}/>
+          <Text style={styles.rankNumber}>{props.rank} .</Text>
           <Text style={styles.name}>{props.user.name}</Text>
+          {props.rank == 1 && (
+          <MaterialCommunityIcons name="crown" size={20} style={{color: 'white'}}/>
+        )
+        }
         </View>
-
-        <View>
-          {/* display coin image */}
-          <Text style={styles.score}>{props.user.points} points</Text>
-        </View>
-        {/* </View> */}
+        <Text style={styles.score}>{props.user.points} pts</Text>
       </TouchableOpacity>
     </View>
   );
@@ -46,15 +50,16 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    // justifyContent: 'space-around',
     alignItems: 'center',
 
   },
   rankNumber: {
+    paddingRight: 4,
     padding: 7,
     // backgroundColor: 'white',
     borderRadius: 5,
-    fontSize: 10,
+    fontSize: 13,
   },
   name: {
     fontSize: 15,
@@ -63,5 +68,12 @@ const styles = StyleSheet.create({
   },
   score: {
     fontSize: 15,
+    marginLeft: 'auto'
+
+  },
+  profilePicture: {
+    width: 30,
+    height: 30,
+    borderRadius: 5
   }
 });
