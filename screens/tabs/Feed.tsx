@@ -20,6 +20,7 @@ import {getQuestFromGPT, getQuestLocation} from '../../api/QuestCreator';
 import {Challenge} from '../../types/Challenge';
 import * as Location from 'expo-location';
 import {Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
+import {GOOGLE_API_KEY} from '../../config/google';
 
 const post = {
   date: '10-21-23',
@@ -76,12 +77,12 @@ export default function Feed({navigation}: {navigation: any}) {
     let location = await Location.getCurrentPositionAsync();
     const keyword = response?.activity;
     const places = await fetch(
-      `https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=${keyword}&location=${location.coords.latitude},${location.coords.longitude}&radius=40000&key=AIzaSyBEReOmYb8LPOmkAUtxHVd69QvtKZ7i1MA`,
+      `https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=${keyword}&location=${location.coords.latitude},${location.coords.longitude}&radius=40000&key=${GOOGLE_API_KEY}`,
     );
     let json = await places.json();
-    const url = `https://maps.googleapis.com/maps/api/place/details/json?fields=place_id%2Ccurrent_opening_hours%2Cformatted_address%2Cformatted_phone_number%2Cgeometry%2Cname%2Cphotos%2Crating%2Creviews%2Curl%2Cwebsite&place_id=${json.results[0].place_id}&key=AIzaSyBEReOmYb8LPOmkAUtxHVd69QvtKZ7i1MA`;
+    const url = `https://maps.googleapis.com/maps/api/place/details/json?fields=place_id%2Ccurrent_opening_hours%2Cformatted_address%2Cformatted_phone_number%2Cgeometry%2Cname%2Cphotos%2Crating%2Creviews%2Curl%2Cwebsite&place_id=${json.results[0].place_id}&key=${GOOGLE_API_KEY}`;
     const placeData = await fetch(url);
-    const place = (await placeData.json()).result
+    const place = (await placeData.json()).result;
     navigation.navigate('Challenge', {user, location, place});
   }
 
@@ -143,16 +144,20 @@ export default function Feed({navigation}: {navigation: any}) {
                   <View>
                     <Text style={styles.challengeText}>CHALLENGE</Text>
                   </View>
-                  {!loading ? <>
-                    <View>
-                      <Text style={styles.challengeTitle}>
-                        {challenge.name.trim()}
+                  {!loading ? (
+                    <>
+                      <View>
+                        <Text style={styles.challengeTitle}>
+                          {challenge.name.trim()}
+                        </Text>
+                      </View>
+                      <Text style={styles.challengeDescription}>
+                        {challenge.description}
                       </Text>
-                    </View>
-                    <Text style={styles.challengeDescription}>
-                      {challenge.description}
-                    </Text>
-                  </> : <ActivityIndicator size='large' />}
+                    </>
+                  ) : (
+                    <ActivityIndicator size="large" />
+                  )}
                 </View>
               </View>
             </TouchableOpacity>

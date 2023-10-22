@@ -1,10 +1,7 @@
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
-import {User} from '../types/User';
-import * as Location from 'expo-location';
 import axios from 'axios';
 import supabase from '../config/supabase';
-
-const OPENAI_KEY = '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';
+import { OPENAI_KEY } from '../config/openai';
+import { GOOGLE_API_KEY } from '../config/google';
 
 export const getQuestFromGPT = async user => {
   try {
@@ -32,13 +29,10 @@ export const getQuestFromGPT = async user => {
 
 export const getQuestLocation = async input => {
   console.log(input);
-  // if (input.hasLocation == false) {
-  //   return "";
-  // }
   const searchText = input.activity;
   try {
     const response = await axios.get(
-      `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchText}&key=AIzaSyBEReOmYb8LPOmkAUtxHVd69QvtKZ7i1MA`,
+      `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchText}&key=${GOOGLE_API_KEY}`,
     );
     console.log(response.data.results[0]);
     return response.data.results;
