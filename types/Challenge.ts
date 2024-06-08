@@ -8,4 +8,5 @@ export type Challenge = {
   difficulty: number;
   location: Place;
   details: string;
+  place_id: string;
 };

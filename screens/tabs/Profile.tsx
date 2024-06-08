@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   SafeAreaView,
@@ -6,27 +6,23 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Alert,
-  ScrollView
+  ScrollView,
+  ActivityIndicator
 } from 'react-native';
-import {friend1} from '../../types/User';
-import Onboarding from '../Onboarding';
-import {user} from '../../types/User';
-import {Dropdown} from 'react-native-element-dropdown';
-import {Ionicons} from '@expo/vector-icons';
+
+import { Dropdown } from 'react-native-element-dropdown';
+import { Ionicons } from '@expo/vector-icons';
+import supabase from '../../config/supabase';
 
 const data = [
-  {label: 'Not at all', value: '1'},
-  {label: 'A little', value: '2'},
-  {label: 'Moderately', value: '3'},
-  {label: 'Fairly', value: '4'},
-  {label: 'Very', value: '5'},
+  { label: 'Not at all', value: '1' },
+  { label: 'A little', value: '2' },
+  { label: 'Moderately', value: '3' },
+  { label: 'Fairly', value: '4' },
+  { label: 'Very', value: '5' },
 ];
 
-const days: number[] = [];
-for (let i = 0; i < 30; i++) {
-  days.push(Math.random() > 0.5 ? 0 : 1);
-}
+
 
 const months = [
   'Jan',
@@ -72,90 +68,116 @@ const dropDownstyles = StyleSheet.create({
   },
 });
 
-function Circle(radius: number, color: string) {
-  return (
-    <View
-      style={{
-        backgroundColor: color,
-        width: radius * 2,
-        height: radius * 2,
-        borderWidth: 0.5,
-        borderRadius: radius,
-        margin: 5,
-      }}></View>
-  );
-}
 
-export default function Profile({navigation}: {navigation: any}) {
+
+export default function Profile({ navigation }: { navigation: any }) {
   const [name, setName] = useState('');
-  const [age, setAge] = useState('');
-  const [gender, setGender] = useState('');
-  const [hobbies, setHobbies] = useState('');
-  function navigateToOnboard() {
-    navigation.navigate('Onboarding', {user});
-  }
-  const [extrovertedness, setExtrovertedness] = useState<any>(null);
-  const [emotionalStability, setEmotionalStability] = useState<any>(null);
-  const [agreeableness, setAgreeableness] = useState<any>(null);
-  const [openness, setOpenness] = useState<any>(null);
+  const [Loading, setLoading] = useState(true)
+  const [profilePicture, setProfilePicture] = useState('')
+  const [challengesCompleted, setChallengesCompleted] = useState(0)
+  const [points, setPoints] = useState(0)
+  const [days, setDays] = useState([])
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        setLoading(true);
+        let { data, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', 2)
+          .single();
+
+        if (error) {
+          throw error;
+        }
+
+        setName(data.name)
+        setProfilePicture(data.profilePicture)
+        setChallengesCompleted(data.challengesCompleted)
+        setPoints(data.points)
+        setDays(data.days_completed)
+
+      } catch (error: any) {
+        console.error('Error fetching user:', error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+
+  function navigateToOnboard() {
+    navigation.navigate('Onboarding');
+  }
+
+
+  if (Loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    )
+  }
   return (
     <SafeAreaView>
       <ScrollView>
-      <View style={styles.imageContainer}>
-        <Image
-          style={styles.image}
-          source={{
-            uri: friend1.profilePicture,
-          }}
-        />
-      </View>
-      <Text style={styles.name}>{friend1.name}</Text>
-      <Text style={styles.stats}>{friend1.points} points</Text>
-      <Text style={styles.stats}>
-        {friend1.challengesCompleted} challenges completed
-      </Text>
-
-      <TouchableOpacity
-        style={{
-          justifyContent: 'center',
-          marginTop: 40,
-          borderWidth: 0.5,
-          borderRadius: 60,
-          width: 250,
-          alignItems: 'center',
-          padding: 10,
-          alignSelf: 'center',
-        }}
-        onPress={navigateToOnboard}>
-        <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: 15}}>
-          {' '}
-          Update Preferences{' '}
+        <View style={styles.imageContainer}>
+          <Image
+            style={styles.image}
+            source={{
+              uri: profilePicture,
+            }}
+          />
+        </View>
+        <Text style={styles.name}>{name}</Text>
+        <Text style={styles.stats}>{points} points</Text>
+        <Text style={styles.stats}>
+          {challengesCompleted} challenges completed
         </Text>
-      </TouchableOpacity>
-      <View
-        style={{
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          marginTop: 50,
-        }}>
-        {days.map((item, index) => {
-          const date = new Date(Date.now() - 86_400_000 * (30 - index - 1));
-          return (
-            <View key={index} style={{flexDirection: 'column', padding: 2}}>
-              <Text style={{fontSize: 10, textAlign: 'center'}}>
-                {date.getMonth() + 1 + '/' + date.getDate()}
-              </Text>
-              <Ionicons
-                name="compass"
-                size={36}
-                color={item ? 'green' : 'lightgray'}
-              />
-            </View>
-          );
-        })}
-      </View>
+
+        <TouchableOpacity
+          style={{
+            justifyContent: 'center',
+            marginTop: 40,
+            borderWidth: 0.5,
+            borderRadius: 60,
+            width: 250,
+            alignItems: 'center',
+            padding: 10,
+            alignSelf: 'center',
+          }}
+          onPress={navigateToOnboard}>
+          <Text style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 15 }}>
+            {' '}
+            Update Preferences{' '}
+          </Text>
+        </TouchableOpacity>
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            marginTop: 50,
+          }}>
+          {days.map((item, index) => {
+            const date = new Date(Date.now() - 86_400_000 * (30 - index - 1));
+            return (
+              <View key={index} style={{ flexDirection: 'column', padding: 2 }}>
+                <Text style={{ fontSize: 10, textAlign: 'center' }}>
+                  {date.getMonth() + 1 + '/' + date.getDate()}
+                </Text>
+                <Ionicons
+                  name="compass"
+                  size={36}
+                  color={item ? 'green' : 'lightgray'}
+                />
+              </View>
+            );
+          })}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

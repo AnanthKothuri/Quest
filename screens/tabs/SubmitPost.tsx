@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import { useState } from 'react';
 import supabase from '../../config/supabase';
 import {
   SafeAreaView,
@@ -6,18 +6,13 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  View,
-  Dimensions,
   Image,
 } from 'react-native';
 
-import Post from './../../components/Post';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {User} from '../../types/User';
-import {Challenge} from '../../types/Challenge';
-import {PostDetails} from '../../types/PostDetails';
+import { User } from '../../types/User';
+import { PostDetails } from '../../types/PostDetails';
 import * as ImagePicker from 'expo-image-picker';
-import {MaterialCommunityIcons} from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function SubmitPost({
   navigation,
@@ -27,31 +22,58 @@ export default function SubmitPost({
   route: any;
 }) {
   const user: User = route.params.user;
-  //const media = String(route.params.media);
   const [description, setDescription] = useState('');
   const [media, setMedia] = useState('');
-  function addPoints() {
-    console.log(user.points);
-    if (user.challenge.difficulty === 1) {
-      route.user.points += 10;
-    } else if (user.challenge.difficulty === 2) {
-      user.points += 30;
-    } else {
-      user.points += 50;
+
+
+  const updateInformation = async () => {
+    let { data, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', 2)
+      .single();
+    if (error) {
+      throw error;
     }
-    user.challengesCompleted++;
-    
-    console.log(user.points);
+    if (user.challenge.difficulty === 1) {
+      data.points += 10;
+    } else if (user.challenge.difficulty === 2) {
+      data.points += 30;
+    } else {
+      data.points += 50;
+    }
+    data.challengesCompleted += 1;
+    data.days_completed[data.days_completed.length - 1] = true
+
+    const { } = await supabase
+      .from('users')
+      .update({
+        points: data.points,
+        challengesCompleted: data.challengesCompleted,
+        days_completed: data.days_completed
+      })
+      .eq('id', 2);
+    user.challenge.inProgress = false;
   }
-  function navigateToFeed() {
+  async function navigateToFeed() {
     // ADD POST TO SUPABASE
+    const { } = await supabase
+      .from('posts')
+      .update({
+        date: user.challenge.date,
+        description: description,
+        media: media
+      })
+      .eq('user_id', 4)
+
+
     const newPost: PostDetails = {
       date: user.challenge.date,
       description: description,
       media: media,
     };
     user.latestPost = newPost;
-    user.challenge.inProgress = false;
+
     navigation.navigate('Feed');
   }
 
@@ -74,7 +96,7 @@ export default function SubmitPost({
           <MaterialCommunityIcons name="upload" size={40} />
         </TouchableOpacity>
       ) : (
-        <Image source={{uri: media}} style={styles.image} />
+        <Image source={{ uri: media }} style={styles.image} />
       )}
       <Text style={styles.date}>{new Date(user.challenge.date).toDateString()}</Text>
 
@@ -86,9 +108,9 @@ export default function SubmitPost({
       />
 
       <TouchableOpacity
-        onPress={() => {
-          navigateToFeed();
-          addPoints();
+        onPress={async () => {
+          await updateInformation();
+          await navigateToFeed();
         }}
         style={styles.submitButton}>
         <Text style={styles.buttonText}>Post!</Text>

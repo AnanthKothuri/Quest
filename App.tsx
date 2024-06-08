@@ -1,17 +1,17 @@
 /* eslint-disable react/no-unstable-nested-components */
 import React from 'react';
-import {Text} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
+import { Text } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Feed from './screens/tabs/Feed';
 import Leaderboard from './screens/tabs/Leaderboard';
 import Profile from './screens/tabs/Profile';
 import Challenge from './screens/tabs/Challenge';
 import Onboarding from './screens/Onboarding';
 import SubmitPost from './screens/tabs/SubmitPost';
-import {Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 // import {ProfileIcon} from './components/Icons';
 // import {LeaderboardIcon} from './components/Icons';
 // import {FeedIcon} from './components/Icons';
@@ -23,12 +23,12 @@ function Home() {
   return (
     <Tab.Navigator
       initialRouteName="Feed"
-      screenOptions={({route}) => ({
-        tabBarIcon: ({focused}) => {
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused }) => {
           if (route.name === 'Leaderboard') {
             return (
               <Ionicons
-                name={focused ? 'md-podium' : 'podium-outline'}
+                name={focused ? 'podium' : 'podium-outline'}
                 size={25}
               />
             );
@@ -68,7 +68,7 @@ function App(): JSX.Element {
           <Stack.Screen
             name="Home"
             component={Home}
-            options={{headerShown: false}}
+            options={{ headerShown: false }}
           />
           <Stack.Screen name="Onboarding" component={Onboarding} />
           <Stack.Screen name="Challenge" component={Challenge} />

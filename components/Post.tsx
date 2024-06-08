@@ -1,40 +1,65 @@
-import React from 'react';
-import {Text, StyleSheet, View, Image} from 'react-native';
-import {User} from '../types/User';
-import {PostDetails} from '../types/PostDetails';
-import {Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
+import React, { useEffect, useState } from 'react';
+import { Text, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import supabase from '../config/supabase';
 
-// type Props = {
-//   user: User;
-//   post: PostDetails;
-// };
 
-export default function Post({user}: {user: User}) {
+
+
+
+export default function Post({ user, onLoaded }: { user: any, onLoaded: any }) {
+  const [postData, setPostData] = useState<any | null>(null);
+
+  async function getPost() {
+    console.log(user.name)
+    console.log(user.LatestPost)
+    const { data: PostData, error: PostError } = await supabase
+      .from('posts')
+      .select('*')
+      .eq('user_id', user.LatestPost)
+      .single();
+
+
+    setPostData(PostData);
+    console.log("postData")
+    console.log(postData);
+  }
+
+  useEffect(() => {
+    getPost().then(() =>
+      onLoaded())
+  }, [])
+
+  const [isLiked, setIsLiked] = useState(false);
+
+  if (!postData) {
+    return null;  // Or render some placeholder
+  }
   return (
     <View style={styles.container}>
       <View style={styles.profileContainer}>
         <View style={styles.imageAndName}>
-          <Image source={{uri: user.profilePicture}} style={styles.profileImage} />
-          <View style={{paddingLeft: 10}}>
+          <Image source={{ uri: user.profilePicture }} style={styles.profileImage} />
+          <View style={{ paddingLeft: 10 }}>
             <Text style={styles.name}>{user.name}</Text>
-            <Text style={styles.date}>{user.latestPost.date}</Text>
+            <Text style={styles.date}>{postData.date}</Text>
           </View>
         </View>
 
-        <Ionicons name="ellipsis-horizontal-sharp" size={25} />
       </View>
 
-      
-      <Image source={{uri: user.latestPost.media}} style={styles.postContainer}/>
-      {/* <View style={styles.postContainer} /> */}
-        
+
+      <Image source={{ uri: postData.media }} style={styles.postContainer} />
+
       <View style={styles.footerContainer}>
-        <Text style={{paddingTop: 5, paddingBottom: 5}}>{user.latestPost.description}</Text>
-        <MaterialCommunityIcons name="thumb-up-outline" size={20}/>
+        <Text style={{ paddingTop: 5, paddingBottom: 5 }}>{postData.description}</Text>
+        <TouchableOpacity onPress={() => setIsLiked(!isLiked)}>
+          <MaterialCommunityIcons name={isLiked ? "thumb-up" : "thumb-up-outline"} size={20} />
+        </TouchableOpacity>
       </View>
     </View>
   );
-  
+
 }
 
 const styles = StyleSheet.create({
@@ -44,7 +69,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     padding: 10,
     borderRadius: 15,
-    shadowOffset: {width: 1, height: 2},
+    shadowOffset: { width: 1, height: 2 },
     shadowOpacity: 0.3,
   },
   headerContainer: {

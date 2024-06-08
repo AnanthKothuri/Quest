@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   Text,
   StyleSheet,
@@ -8,11 +8,11 @@ import {
   Alert,
   Dimensions,
 } from 'react-native';
-import {User} from '../../types/User';
-import MapView, {Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import { User } from '../../types/User';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
-import {Place} from '../../types/Place';
-import {Foundation, Ionicons, MaterialCommunityIcons} from '@expo/vector-icons';
+import { Place } from '../../types/Place';
+import { Foundation, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 function getDifficulty(num: number) {
   if (num == 1) {
@@ -49,14 +49,13 @@ export default function Challenge({
   const location: Location.LocationObject = route.params.location;
   const place: Place = route.params.place;
   const user: User = route.params.user;
-  const [address, setAddress] = useState("")
 
   const pickImage = () => {
-    navigation.navigate('Submit Post', {user});
+    navigation.navigate('Submit Post', { user });
   };
 
   return (
-    <View style={{backgroundColor: 'white', flex: 1}}>
+    <View style={{ backgroundColor: 'white', flex: 1 }}>
       <View style={styles.container}>
         <View>
           <Text style={styles.challengeName}> {user.challenge.name} </Text>
@@ -65,14 +64,13 @@ export default function Challenge({
           {location && (
             <>
               <MapView
-                style={{width: '100%', height: '100%'}}
+                style={{ width: '100%', height: '100%' }}
                 initialRegion={{
                   latitude: location.coords.latitude,
                   longitude: location.coords.longitude,
                   latitudeDelta: 1,
                   longitudeDelta: 1,
                 }}
-                provider={PROVIDER_GOOGLE}
                 showsUserLocation={true}>
                 {place && (
                   <Marker
@@ -90,7 +88,7 @@ export default function Challenge({
         </View>
 
         <View style={styles.detailsContainer}>
-          <View style={{flexDirection: 'row', gap: 15}}>
+          <View style={{ flexDirection: 'row', gap: 15 }}>
             <View style={styles.difficultyView}>
               <Ionicons name="barbell-outline" size={25} />
               <Text style={styles.difficulty}>
@@ -129,7 +127,7 @@ export default function Challenge({
 
         <TouchableOpacity onPress={pickImage} style={styles.completeButton}>
           <Text
-            style={{textAlign: 'center', fontSize: 17.5, fontWeight: 'bold'}}>
+            style={{ textAlign: 'center', fontSize: 17.5, fontWeight: 'bold' }}>
             I did it!
           </Text>
         </TouchableOpacity>
@@ -138,7 +136,7 @@ export default function Challenge({
   );
 }
 
-export function mapImage() {}
+export function mapImage() { }
 
 const styles = StyleSheet.create({
   container: {

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import supabase from '../config/supabase';
 import {
   SafeAreaView,
@@ -8,17 +8,16 @@ import {
   TouchableOpacity,
   Alert,
   StyleSheet,
-  View,
 } from 'react-native';
-import {Dropdown} from 'react-native-element-dropdown';
+import { Dropdown } from 'react-native-element-dropdown';
 import { useNavigation } from '@react-navigation/native';
 
 const data = [
-  {label: 'Not at all', value: '1'},
-  {label: 'A little', value: '2'},
-  {label: 'Moderately', value: '3'},
-  {label: 'Fairly', value: '4'},
-  {label: 'Very', value: '5'},
+  { label: 'Not at all', value: '1' },
+  { label: 'A little', value: '2' },
+  { label: 'Moderately', value: '3' },
+  { label: 'Fairly', value: '4' },
+  { label: 'Very', value: '5' },
 ];
 
 const dropDownstyles = StyleSheet.create({
@@ -52,7 +51,7 @@ const dropDownstyles = StyleSheet.create({
   },
 });
 
-export default function Onboarding({navigation}: {navigation: any}) {
+export default function Onboarding({ navigation }: { navigation: any }) {
   const [extrovertedness, setExtrovertedness] = useState<any>(null);
   const [emotionalStability, setEmotionalStability] = useState<any>(null);
   const [agreeableness, setAgreeableness] = useState<any>(null);
@@ -68,21 +67,23 @@ export default function Onboarding({navigation}: {navigation: any}) {
     onChange: any;
   }) => {
     return (
-      <Dropdown
-        style={dropDownstyles.dropdown}
-        placeholderStyle={dropDownstyles.placeholderStyle}
-        selectedTextStyle={dropDownstyles.selectedTextStyle}
-        iconStyle={dropDownstyles.iconStyle}
-        data={data}
-        maxHeight={300}
-        labelField="label"
-        valueField="value"
-        placeholder={my_placeholder}
-        value={my_value}
-        onChange={item => {
-          onChange(item.value);
-        }}
-      />
+      <ScrollView>
+        <Dropdown
+          style={dropDownstyles.dropdown}
+          placeholderStyle={dropDownstyles.placeholderStyle}
+          selectedTextStyle={dropDownstyles.selectedTextStyle}
+          iconStyle={dropDownstyles.iconStyle}
+          data={data}
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          placeholder={my_placeholder}
+          value={my_value}
+          onChange={item => {
+            onChange(item.value);
+          }}
+        />
+      </ScrollView>
     );
   };
   const [name, setName] = useState('');
@@ -91,41 +92,9 @@ export default function Onboarding({navigation}: {navigation: any}) {
   const [hobbies, setHobbies] = useState('');
 
   const handleContinue = async () => {
-    // let user_ID = 0;
-    // let {data: existingID, error} = await supabase
-    //   .from('users')
-    //   .select('id')
-    //   .eq('name', name);
-    // if (error) {
-    //   console.log(existingID);
-    //   Alert.alert('Error retrieving data from Supabase 1.');
-    //   console.log(error);
-    //   return;
-    // }
-    // else {
-    //   if (existingID != null && existingID.length != 0) {
-    //     user_ID = existingID as unknown as number;
-    //   }
-    //   else{
-    //     let {data: newID, error} = await supabase
-    //       .from('profile_data')
-    //       .select('id')
-    //       .order('id', {'ascending': true});
-    //       if (error) {
-    //         Alert.alert('Error retrieving data from Supabase 2.');
-    //         console.log(error);
-    //         return;
-    //       }
-    //       else if (newID) {
-    //         Alert.alert((newID.at(0) as unknown as number).toString());
-    //         user_ID = newID.at(0) as unknown as number;
-    //       }
-    //   }
-      
-      
-    // }
     const user_id = 1;
     const data = {
+      name: name,
       user_id: user_id,
       age: age as unknown as number,
       extroversion: extrovertedness as number,
@@ -134,9 +103,10 @@ export default function Onboarding({navigation}: {navigation: any}) {
       conscientiousness: conscientiousness as number,
       openness: openness as number,
       hobbies,
+      gender
     };
-    
-    const {data: existingData, error: err} = await supabase
+
+    const { data: existingData, error: err } = await supabase
       .from('profile_data')
       .select('*')
       .eq('user_id', data.user_id);
@@ -146,7 +116,7 @@ export default function Onboarding({navigation}: {navigation: any}) {
       return;
     } else {
       if (!existingData || existingData.length == 0) {
-        const {data: insertedData, error} = await supabase
+        const { data: insertedData, error } = await supabase
           .from('profile_data')
           .upsert([data]);
         if (error) {
@@ -155,7 +125,7 @@ export default function Onboarding({navigation}: {navigation: any}) {
           return;
         }
       } else {
-        const {data: updatedData, error} = await supabase
+        const { data: updatedData, error } = await supabase
           .from('profile_data')
           .update([data])
           .eq('user_id', data.user_id);
@@ -172,7 +142,7 @@ export default function Onboarding({navigation}: {navigation: any}) {
 
   return (
     <SafeAreaView style={styles.scrollContainer}>
-      <ScrollView>
+      <ScrollView >
         <Text style={styles.heading}>
           Please answer some onboarding questions. This will help give us an
           idea of what your daily challenges shall be.
@@ -276,6 +246,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 60,
     top: 20,
+    marginBottom: 100
+
   },
   input: {
     padding: 10,
